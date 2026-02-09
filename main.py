@@ -4,8 +4,9 @@ from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import (
     Application,
-    ChannelPostHandler,
-    ContextTypes
+    MessageHandler,
+    ContextTypes,
+    filters
 )
 
 # ===== ENVIRONMENT VARIABLES =====
@@ -16,17 +17,16 @@ WEBHOOK_PATH = "/webhook"
 # ===== EXACT 11 REACTIONS (must match channel settings) =====
 REACTIONS = [
     "👍", "❤️", "😂", "🔥", "👏",
-    "😍", "😎", "🤩", "😱", "🙏", "💯"
+    "😍", "😎", "🤩", "💝", "🫂", "🌸"
 ]
 
 DELAY_SECONDS = 10
 
 # ===== FASTAPI APP =====
 app = FastAPI()
-
 telegram_app = Application.builder().token(BOT_TOKEN).build()
 
-# ===== REACTION HANDLER =====
+# ===== CHANNEL POST HANDLER (UPDATED) =====
 async def react_with_all_11(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.channel_post
 
@@ -38,7 +38,10 @@ async def react_with_all_11(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         await asyncio.sleep(DELAY_SECONDS)
 
-telegram_app.add_handler(ChannelPostHandler(react_with_all_11))
+# ✅ NEW handler (replacement for ChannelPostHandler)
+telegram_app.add_handler(
+    MessageHandler(filters.UpdateType.CHANNEL_POST, react_with_all_11)
+)
 
 # ===== STARTUP: SET WEBHOOK =====
 @app.on_event("startup")
@@ -50,4 +53,6 @@ async def startup():
 @app.post(WEBHOOK_PATH)
 async def telegram_webhook(request: Request):
     data = await request.json()
-    upd
+    update = Update.de_json(data, telegram_app.bot)
+    await telegram_app.process_update(update)
+    return {"ok": True}
