@@ -16,8 +16,8 @@ WEBHOOK_PATH = "/webhook"
 
 # ===== EXACT 11 REACTIONS (must match channel settings) =====
 REACTIONS = [
-    "👍", "❤️", "💝", "🔥", "👏",
-    "😍", "😎", "🤩", "🫂", "🙏", "🌸"
+    "👍", "❤️", "❤️‍🔥", "🔥", "👏",
+    "😍", "😎", "🤩", "😇", "🙏", "💘"
 ]
 
 DELAY_SECONDS = 10
