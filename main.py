@@ -1,14 +1,13 @@
 import os
 import asyncio
 from fastapi import FastAPI, Request
-from telegram import Update
+from telegram import Update, ReactionTypeEmoji
 from telegram.ext import (
     Application,
     MessageHandler,
     ContextTypes,
     filters
 )
-from telegram.constants import ReactionTypeEmoji
 
 # ===== ENVIRONMENT VARIABLES =====
 BOT_TOKEN = os.environ["BOT_TOKEN"]
@@ -35,7 +34,7 @@ async def react_with_all_11(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.set_message_reaction(
             chat_id=message.chat.id,
             message_id=message.message_id,
-            reaction=[ReactionTypeEmoji(emoji)]
+            reaction=[ReactionTypeEmoji(emoji=emoji)]
         )
         await asyncio.sleep(DELAY_SECONDS)
 
