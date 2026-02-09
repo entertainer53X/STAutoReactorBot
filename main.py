@@ -8,6 +8,7 @@ from telegram.ext import (
     ContextTypes,
     filters
 )
+from telegram.constants import ReactionTypeEmoji
 
 # ===== ENVIRONMENT VARIABLES =====
 BOT_TOKEN = os.environ["BOT_TOKEN"]
@@ -17,7 +18,7 @@ WEBHOOK_PATH = "/webhook"
 # ===== EXACT 11 REACTIONS (must match channel settings) =====
 REACTIONS = [
     "👍", "❤️", "😂", "🔥", "👏",
-    "😍", "😎", "🤩", "💝", "🫂", "🌸"
+    "😍", "😎", "🤩", "😱", "🙏", "💯"
 ]
 
 DELAY_SECONDS = 10
@@ -26,7 +27,7 @@ DELAY_SECONDS = 10
 app = FastAPI()
 telegram_app = Application.builder().token(BOT_TOKEN).build()
 
-# ===== CHANNEL POST HANDLER (UPDATED) =====
+# ===== CHANNEL POST HANDLER =====
 async def react_with_all_11(update: Update, context: ContextTypes.DEFAULT_TYPE):
     message = update.channel_post
 
@@ -34,11 +35,10 @@ async def react_with_all_11(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await context.bot.set_message_reaction(
             chat_id=message.chat.id,
             message_id=message.message_id,
-            reaction=[emoji]
+            reaction=[ReactionTypeEmoji(emoji)]
         )
         await asyncio.sleep(DELAY_SECONDS)
 
-# ✅ NEW handler (replacement for ChannelPostHandler)
 telegram_app.add_handler(
     MessageHandler(filters.UpdateType.CHANNEL_POST, react_with_all_11)
 )
